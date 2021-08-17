@@ -1,10 +1,8 @@
 package main
 
 import (
-	"backend/models"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -14,21 +12,13 @@ func (app *Application) getOneMovie(rw http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(params.ByName("id"))
 	if err != nil {
 		app.logger.Println("Invalid id parameter")
-		app.errorJSON(rw, r, err)
+		app.errorJSON(rw, err)
 		return
 	}
 
-	movie := models.Movie{
-		ID:          id,
-		Title:       "Some Title",
-		Description: "Some Description",
-		Year:        2021,
-		ReleaseDate: time.Date(2021, 1, 1, 0, 0, 0, 0, time.Local),
-		Runtime:     100,
-		Rating:      5,
-		MPAARating:  "PG-13",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+	movie, err := app.models.DB.Get(id)
+	if err != nil {
+		app.logger.Println(err)
 	}
 
 	err = app.writeJSON(rw, http.StatusOK, movie)
@@ -38,5 +28,14 @@ func (app *Application) getOneMovie(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Application) getAllMovies(rw http.ResponseWriter, r *http.Request) {
+	movies, err := app.models.DB.All()
+	if err != nil {
+		app.logger.Println(err)
+		app.errorJSON(rw, err)
+	}
 
+	err = app.writeJSON(rw, http.StatusOK, movies)
+	if err != nil {
+		app.logger.Println(err)
+	}
 }
