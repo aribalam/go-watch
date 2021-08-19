@@ -41,7 +41,7 @@ func main() {
 	var config Config
 	flag.IntVar(&config.Port, "port", 4000, "Port Number")
 	flag.StringVar(&config.Env, "env", "development", "Environment")
-	flag.StringVar(&config.db.dsn, "dsn", "postgres://user:password@localhost:5432/go_movies?sslmode=disable", "postgres connection")
+	flag.StringVar(&config.db.dsn, "dsn", "postgres://postgres:180eedcd@localhost:5432/go_movies?sslmode=disable", "postgres connection")
 	flag.Parse()
 
 	db, err := openDB(config)
