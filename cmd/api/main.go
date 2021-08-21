@@ -22,6 +22,9 @@ type Config struct {
 	db   struct {
 		dsn string
 	}
+	jwt struct {
+		secret string
+	}
 }
 
 type AppStatus struct {
@@ -43,6 +46,9 @@ func main() {
 	flag.StringVar(&config.Env, "env", "development", "Environment")
 	flag.StringVar(&config.db.dsn, "dsn", "postgres://postgres:180eedcd@localhost:5432/go_movies?sslmode=disable", "postgres connection")
 	flag.Parse()
+
+	// read jwt secret from env
+	config.jwt.secret = os.Getenv("GO_MOVIES_JWT")
 
 	db, err := openDB(config)
 	if err != nil {

@@ -18,14 +18,19 @@ func (app *Application) writeJSON(rw http.ResponseWriter, status int, data inter
 	return nil
 }
 
-func (app *Application) errorJSON(rw http.ResponseWriter, err error) {
+func (app *Application) errorJSON(w http.ResponseWriter, err error, status ...int) {
+	statusCode := http.StatusBadRequest
+	if len(status) > 0 {
+		statusCode = status[0]
+	}
+
 	type jsonError struct {
 		Message string `json:"message"`
 	}
 
-	theErr := jsonError{
+	theError := jsonError{
 		Message: err.Error(),
 	}
 
-	app.writeJSON(rw, http.StatusBadRequest, theErr)
+	app.writeJSON(w, statusCode, theError)
 }
