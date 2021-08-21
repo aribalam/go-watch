@@ -21,10 +21,11 @@ type Movie struct {
 	CreatedAt   time.Time      `json:"created_at"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
 	MovieGenre  map[int]string `json:"genres"`
+	Poster      string         `json:"poster"`
 }
 
 type Genre struct {
-	ID        int       `json:"-"`
+	ID        int       `json:"id"`
 	GenreName string    `json:"genre_name"`
 	CreatedAt time.Time `json:"-"`
 	UpdatedAt time.Time `json:"-"`
@@ -37,6 +38,12 @@ type MovieGenre struct {
 	Genre     Genre     `json:"genre"`
 	CreatedAt time.Time `json:"-"`
 	UpdatedAt time.Time `json:"-"`
+}
+
+type User struct {
+	ID       int
+	Email    string
+	Password string
 }
 
 func NewModels(db *sql.DB) Models {
