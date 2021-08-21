@@ -1,10 +1,34 @@
 import React, { Component, Fragment } from "react";
 
-export default class OneMovie extends Component {
+export default class OneMovieGraphQL extends Component {
   state = { movie: {}, isLoaded: false, error: null };
 
   componentDidMount() {
-    fetch(`/v1/movie/` + this.props.match.params.id)
+    const payload = `
+    {
+        movie(id: ${this.props.match.params.id}) {
+            id
+            title
+            runtime
+            year
+            release_date
+            description
+            rating
+            mpaa_rating
+        }
+    }
+    `;
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const requestOptions = {
+      method: "POST",
+      body: payload,
+      headers: myHeaders,
+    };
+
+    fetch(`/v1/graphql`, requestOptions)
       .then((response) => {
         if (response.status !== "200") {
           let err = Error;
@@ -32,9 +56,9 @@ export default class OneMovie extends Component {
   render() {
     const { movie, isLoaded, error } = this.state;
     if (movie.genres) {
-        movie.genres = Object.values(movie.genres);
+      movie.genres = Object.values(movie.genres);
     } else {
-        movie.genres = [];
+      movie.genres = [];
     }
 
     if (error) {
@@ -48,19 +72,19 @@ export default class OneMovie extends Component {
             Movie: {movie.title} ({movie.year})
           </h2>
 
-            <div className="float-start">
-                <small>Rating: {movie.mpaa_rating}</small>
-            </div>
-            <div className="float-end">
-                {movie.genres.map((m, index) =>(
-                    <span className="badge bg-secondary me-1" key={index}>
-                        {m}
-                    </span>
-                ))}
-            </div>
-            <div className="clearfix"></div>
+          <div className="float-start">
+            <small>Rating: {movie.mpaa_rating}</small>
+          </div>
+          <div className="float-end">
+            {movie.genres.map((m, index) => (
+              <span className="badge bg-secondary me-1" key={index}>
+                {m}
+              </span>
+            ))}
+          </div>
+          <div className="clearfix"></div>
 
-            <hr />
+          <hr />
 
           <table className="table table-compact table-striped">
             <thead></thead>
@@ -72,8 +96,10 @@ export default class OneMovie extends Component {
                 <td>{movie.title}</td>
               </tr>
               <tr>
-                  <td><strong>Description:</strong></td>
-                  <td>{movie.description}</td>
+                <td>
+                  <strong>Description:</strong>
+                </td>
+                <td>{movie.description}</td>
               </tr>
               <tr>
                 <td>
